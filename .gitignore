@@ -225,3 +225,4 @@ data/
 *.zip
 *.pem
 .kaggle/
+.vscode/
