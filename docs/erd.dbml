@@ -1,0 +1,97 @@
+// Olist Brazilian E-Commerce: ERD draf 
+
+Table customers {
+  customer_id char(32) [pk, note: 'baru di setiap pesanan']
+  customer_unique_id char(32) [note: 'identitas orang yang sama']
+  customer_zip_code_prefix char(5)
+  customer_city varchar(64)
+  customer_state char(2)
+}
+
+Table orders {
+  order_id char(32) [pk]
+  customer_id char(32) [ref: - customers.customer_id]
+  order_status varchar(16)
+  order_purchase_timestamp datetime
+  order_approved_at datetime
+  order_delivered_carrier_date datetime
+  order_delivered_customer_date datetime
+  order_estimated_delivery_date datetime
+}
+
+Table order_items {
+  order_id char(32) [ref: > orders.order_id]
+  order_item_id int
+  product_id char(32) [ref: > products.product_id]
+  seller_id char(32) [ref: > sellers.seller_id]
+  shipping_limit_date datetime
+  price decimal(10,2)
+  freight_value decimal(10,2)
+
+  indexes {
+    (order_id, order_item_id) [pk]
+  }
+}
+
+Table order_payments {
+  order_id char(32) [ref: > orders.order_id]
+  payment_sequential int
+  payment_type varchar(20)
+  payment_installments int
+  payment_value decimal(10,2)
+
+  indexes {
+    (order_id, payment_sequential) [pk]
+  }
+}
+
+Table order_reviews {
+  review_id char(32)
+  order_id char(32) [ref: > orders.order_id]
+  review_score tinyint
+  review_comment_title varchar(255)
+  review_comment_message text
+  review_creation_date datetime
+  review_answer_timestamp datetime
+
+  indexes {
+    (review_id, order_id) [pk]
+  }
+}
+
+Table products {
+  product_id char(32) [pk]
+    product_category_name varchar(64) [ref: > category_translation.product_category_name, note: '610 null; 2 kategori tanpa terjemahan']
+  product_name_lenght int [note: 'salah eja dari sumber']
+  product_description_lenght int [note: 'salah eja dari sumber']
+  product_photos_qty int
+  product_weight_g int
+  product_length_cm int
+  product_height_cm int
+  product_width_cm int
+}
+
+Table sellers {
+  seller_id char(32) [pk]
+  seller_zip_code_prefix char(5)
+  seller_city varchar(64)
+  seller_state char(2)
+}
+
+Table category_translation {
+  product_category_name varchar(64) [pk]
+  product_category_name_english varchar(64)
+}
+
+Table geolocation_zip {
+  geolocation_zip_code_prefix char(5) [pk]
+  geolocation_lat decimal(9,6)
+  geolocation_lng decimal(9,6)
+  geolocation_city varchar(64)
+  geolocation_state char(2)
+
+  Note: 'Versi agregat 1 baris per prefix (raw ±1 juta baris)'
+}
+
+Ref: customers.customer_zip_code_prefix > geolocation_zip.geolocation_zip_code_prefix
+Ref: sellers.seller_zip_code_prefix > geolocation_zip.geolocation_zip_code_prefix

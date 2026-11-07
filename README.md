@@ -11,7 +11,7 @@ TBD
 TBD: link + screenshots
 
 ## Data
-Brazilian E-Commerce Public Dataset by Olist (Kaggle): ~100k orders, 2016–2018, 9 relational tables.
+Source: [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) (see Kaggle page for license).
 
 ## Architecture
 Kaggle CSV → Python ETL → MySQL 8 on Aiven (raw → clean → mart) → Google Data Studio
