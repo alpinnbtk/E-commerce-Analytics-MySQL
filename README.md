@@ -29,10 +29,10 @@ TBD
 
 ## Design Decisions
 - **Raw layer keeps data as delivered.** Surrogate `raw_id` primary keys, no foreign keys, nullable columns, so duplicates and orphans can be detected later instead of being rejected at load.
-- **Geolocation is pre-aggregated** to one row per zip prefix at load time (~1M source rows) to fit the 1 GB free-tier disk.
+- **Geolocation is pre-aggregated** to one row per zip prefix (mean lat/lng, most frequent city/state). Points outside Brazil's bounding box (42 points) are dropped before averaging.
 - **DATETIME, not TIMESTAMP**, to keep Brazil local times without timezone conversion.
 
 ## How to Reproduce
-1. Clone the repo, create a virtual environment, and run `pip install -r requirements.txt` (or open it in GitHub Codespaces).
-2. Set `KAGGLE_API_TOKEN` as an environment variable (or a Codespaces secret).
-3. TBD
+1. Copy `.env.example` to `.env` and fill in your MySQL credentials; put the server CA certificate at `certs/ca.pem`.
+2. Run `sql/00_create_schemas.sql` and `sql/01_raw_tables.sql`.
+3. `python etl/download_data.py` then `python etl/load_raw.py`.
