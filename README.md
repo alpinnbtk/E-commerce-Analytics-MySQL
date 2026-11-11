@@ -35,4 +35,6 @@ TBD
 ## How to Reproduce
 1. Copy `.env.example` to `.env` and fill in your MySQL credentials; put the server CA certificate at `certs/ca.pem`.
 2. Run `sql/00_create_schemas.sql` and `sql/01_raw_tables.sql`.
-3. `python etl/download_data.py` then `python etl/load_raw.py`.
+3. python `etl/download_data.py` then python `etl/load_raw.py`.
+4. Run `sql/04_indexes.sql` (after loading, so the bulk insert stays fast).
+5. Run `sql/02_data_quality_checks.sql` to create the data-quality scorecard view.
