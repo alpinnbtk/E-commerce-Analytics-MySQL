@@ -14,7 +14,7 @@ TBD: link + screenshots
 Source: [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) (see Kaggle page for license).
 
 ## Architecture
-Kaggle CSV → Python ETL → MySQL 8 on Aiven (raw → clean → mart) → Google Data Studio
+Kaggle CSV → Python ETL → TiDB Cloud Starter (MySQL-compatible) (raw → clean → mart) → Google Data Studio
 
 ## Tech Stack
 MySQL 8 · Python (pandas, SQLAlchemy) · Google Data Studio · VS Code / GitHub Codespaces
@@ -31,9 +31,10 @@ TBD
 - **Raw layer keeps data as delivered.** Surrogate `raw_id` primary keys, no foreign keys, nullable columns, so duplicates and orphans can be detected later instead of being rejected at load.
 - **Geolocation is pre-aggregated** to one row per zip prefix (mean lat/lng, most frequent city/state). Points outside Brazil's bounding box (42 points) are dropped before averaging.
 - **DATETIME, not TIMESTAMP**, to keep Brazil local times without timezone conversion.
+- **Migrated from Aiven for MySQL (free tier retired Dec 2026) to TiDB Cloud Starter.** Because every step is scripted, the migration was a full rebuild from source CSVs; row counts and all 17 data-quality checks matched exactly on both databases.
 
 ## How to Reproduce
-1. Copy `.env.example` to `.env` and fill in your MySQL credentials; put the server CA certificate at `certs/ca.pem`.
+1. Copy `.env.example` to `.env` and fill in your MySQL credentials; put the server CA certificate at `certs/isrgrootx1.pem`.
 2. Run `sql/00_create_schemas.sql` and `sql/01_raw_tables.sql`.
 3. python `etl/download_data.py` then python `etl/load_raw.py`.
 4. Run `sql/04_indexes.sql` (after loading, so the bulk insert stays fast).

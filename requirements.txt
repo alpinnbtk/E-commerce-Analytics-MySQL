@@ -6,3 +6,4 @@ python-dotenv>=1.0
 kaggle>=1.8
 ipykernel
 six
+sqlparse
